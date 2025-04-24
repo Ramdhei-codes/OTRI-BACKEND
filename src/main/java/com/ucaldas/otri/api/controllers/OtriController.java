@@ -1,4 +1,4 @@
-package com.ucaldas.otri.api;
+package com.ucaldas.otri.api.controllers;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

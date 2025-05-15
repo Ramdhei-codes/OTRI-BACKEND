@@ -22,7 +22,7 @@ public class AuthenticationService {
     private final IJwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
-    public AuthenticationResponse register(RegisterRequest request){
+    public String register(RegisterRequest request){
         User user = User.builder()
                 .firstname(request.getFirstname())
                 .lastname(request.getLastname())
@@ -32,10 +32,7 @@ public class AuthenticationService {
                 .build();
 
         repository.save(user);
-        String jwtToken = jwtService.generateToken(user);
-        return AuthenticationResponse.builder()
-                .token(jwtToken)
-                .build();
+        return "Usuario registrado exitosamente";
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request){

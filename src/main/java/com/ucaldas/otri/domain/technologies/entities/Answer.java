@@ -1,5 +1,6 @@
-package com.ucaldas.otri.domain.technologies;
+package com.ucaldas.otri.domain.technologies.entities;
 
+import com.ucaldas.otri.domain.technologies.enums.ReadinessType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,7 +19,7 @@ public class Answer {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-    private String content;
+    private boolean content;
     private String question;
     private int level;
     private ReadinessType type;

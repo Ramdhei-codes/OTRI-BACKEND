@@ -1,4 +1,4 @@
-package com.ucaldas.otri.domain.technologies;
+package com.ucaldas.otri.domain.technologies.enums;
 
 public enum PreliminaryInterest {
     YES, NO, EXPLORING

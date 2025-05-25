@@ -1,12 +1,11 @@
-package com.ucaldas.otri.domain.technologies;
+package com.ucaldas.otri.domain.technologies.entities;
 
+import com.ucaldas.otri.domain.technologies.enums.ReadinessType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.UUID;
 
 @Data
 @Builder

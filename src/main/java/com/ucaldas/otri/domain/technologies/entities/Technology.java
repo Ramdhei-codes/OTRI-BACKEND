@@ -1,4 +1,4 @@
-package com.ucaldas.otri.domain.technologies;
+package com.ucaldas.otri.domain.technologies.entities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -31,6 +33,8 @@ public class Technology {
     private MarketAnalysis marketAnalysis;
     private String transferMethod;
     private String recommendedActions;
+    private Date createdDate;
+    private Date lastUpdatedDate;
     @OneToMany(mappedBy = "technology")
     private List<Answer> answers;
 }

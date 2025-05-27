@@ -6,6 +6,7 @@ import com.ucaldas.otri.application.technologies.models.RegisterTechnologyReques
 import com.ucaldas.otri.application.technologies.models.TechnologySummaryResponse;
 import com.ucaldas.otri.application.technologies.models.ViewTechnologyResponse;
 import com.ucaldas.otri.domain.technologies.entities.*;
+import com.ucaldas.otri.domain.technologies.enums.TechnologyStatus;
 import com.ucaldas.otri.domain.technologies.repositories.TechnologiesRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -35,6 +36,7 @@ public class TechnologiesService {
                 .marketAnalysis(marketAnalysis)
                 .transferMethod(request.getTransferMethod())
                 .createdDate(new Date())
+                .status(TechnologyStatus.ACTIVE)
                 .build();
         Technology savedTechnology = repository.save(technology);
         return savedTechnology.getId().toString();
@@ -78,6 +80,7 @@ public class TechnologiesService {
                 .transferMethod(technology.getTransferMethod())
                 .lastUpdatedDate(technology.getLastUpdatedDate())
                 .createdDate(technology.getCreatedDate())
+                .status(technology.getStatus())
                 .build();
     }
 

@@ -2,6 +2,7 @@ package com.ucaldas.otri.application.technologies.models;
 
 import com.ucaldas.otri.domain.technologies.enums.InventiveLevel;
 import com.ucaldas.otri.domain.technologies.enums.PreliminaryInterest;
+import com.ucaldas.otri.domain.technologies.enums.TechnologyStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -44,4 +45,5 @@ public class ViewTechnologyResponse {
     private String recommendedActions;
     private Date lastUpdatedDate;
     private Date createdDate;
+    private TechnologyStatus status;
 }

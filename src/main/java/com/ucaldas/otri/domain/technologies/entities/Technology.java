@@ -1,5 +1,6 @@
 package com.ucaldas.otri.domain.technologies.entities;
 
+import com.ucaldas.otri.domain.technologies.enums.TechnologyStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -35,6 +36,7 @@ public class Technology {
     private String recommendedActions;
     private Date createdDate;
     private Date lastUpdatedDate;
+    private TechnologyStatus status;
     @OneToMany(mappedBy = "technology")
     private List<Answer> answers;
 }

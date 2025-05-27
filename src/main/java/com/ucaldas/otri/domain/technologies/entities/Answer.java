@@ -20,6 +20,7 @@ public class Answer {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     private boolean content;
+    private boolean checked;
     private String question;
     private int level;
     private ReadinessType type;

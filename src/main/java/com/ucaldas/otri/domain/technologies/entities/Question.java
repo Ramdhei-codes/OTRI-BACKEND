@@ -15,8 +15,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "Questions")
 public class Question {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private String id;
     private String content;
     private int level;
     private ReadinessType type;

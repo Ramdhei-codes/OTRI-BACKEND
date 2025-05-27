@@ -3,6 +3,7 @@ package com.ucaldas.otri.application.technologies.services;
 import com.ucaldas.otri.application.shared.exceptions.ApplicationException;
 import com.ucaldas.otri.application.shared.exceptions.ErrorCodes;
 import com.ucaldas.otri.application.technologies.models.RegisterTechnologyRequest;
+import com.ucaldas.otri.application.technologies.models.TechnologySummaryResponse;
 import com.ucaldas.otri.application.technologies.models.ViewTechnologyResponse;
 import com.ucaldas.otri.domain.technologies.entities.*;
 import com.ucaldas.otri.domain.technologies.repositories.TechnologiesRepository;
@@ -11,6 +12,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -76,6 +79,18 @@ public class TechnologiesService {
                 .lastUpdatedDate(technology.getLastUpdatedDate())
                 .createdDate(technology.getCreatedDate())
                 .build();
+    }
+
+    public List<TechnologySummaryResponse> listAll() {
+        return repository.findAll().stream()
+                .map(tech -> TechnologySummaryResponse.builder()
+                        .technologyId(tech.getId())
+                        .resultName(tech.getResultName())
+                        .createdDate(tech.getCreatedDate())
+                        .lastUpdatedDate(tech.getLastUpdatedDate())
+                        .build())
+                .collect(Collectors.toList()
+                );
     }
 
     private static IntellectualProtection getIntellectualProtection(RegisterTechnologyRequest request) {

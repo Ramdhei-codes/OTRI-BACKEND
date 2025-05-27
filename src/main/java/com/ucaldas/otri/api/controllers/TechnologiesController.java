@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("api/technologies")
+@RequestMapping("/api/technologies")
 @RequiredArgsConstructor
 public class TechnologiesController {
     private final TechnologiesService service;

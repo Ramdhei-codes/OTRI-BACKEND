@@ -6,10 +6,7 @@ import com.ucaldas.otri.application.technologies.models.ViewTechnologyResponse;
 import com.ucaldas.otri.application.technologies.services.TechnologiesService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 import java.util.List;
@@ -17,13 +14,15 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/technologies")
 @RequiredArgsConstructor
+
 public class TechnologiesController {
     private final TechnologiesService service;
 
     @PostMapping("/register")
-    public ResponseEntity<String> register(RegisterTechnologyRequest request){
+    public ResponseEntity<String> register(@RequestBody RegisterTechnologyRequest request) {
         return ResponseEntity.ok(service.register(request));
     }
+
 
     @GetMapping("/view")
     public ResponseEntity<ViewTechnologyResponse> view(UUID id){

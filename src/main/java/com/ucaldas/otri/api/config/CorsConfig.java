@@ -14,14 +14,16 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
+                        .allowedOriginPatterns("*") // More permissive for development
                         .allowedOrigins(
-                                "http://localhost:3000",   // React/Next.js development server
-                                "http://localhost:4200",   // Angular development server
-                                "http://localhost:8080"    // Your local environment
-                                // Add your production domains here
+                                "http://localhost:3000",
+                                "http://127.0.0.1:3000",  // Sometimes localhost resolves differently
+                                "http://localhost:4200",
+                                "http://localhost:8080"
                         )
-                        .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
+                        .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD")
                         .allowedHeaders("*")
+                        .exposedHeaders("*") // Add this if you need to expose custom headers
                         .allowCredentials(true)
                         .maxAge(3600);
             }

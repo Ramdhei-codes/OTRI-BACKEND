@@ -91,10 +91,30 @@ public class TechnologiesService {
                         .resultName(tech.getResultName())
                         .responsibleGroup(tech.getResponsibleGroup())
                         .lastUpdatedDate(tech.getLastUpdatedDate())
+                        .status(tech.getStatus())
                         .build())
                 .collect(Collectors.toList()
                 );
     }
+
+    public void updateTechnology(UUID id, RegisterTechnologyRequest request) {
+        Technology technology = repository.findById(id).orElseThrow(() ->
+                new ApplicationException("Tecnología no encontrada", ErrorCodes.VALIDATION_ERROR));
+
+        technology.setResultName(request.getResultName());
+        technology.setResponsibleGroup(request.getResponsibleGroup());
+        technology.setTransferMethod(request.getTransferMethod());
+        technology.setRecommendedActions(request.getRecommendedActions());
+        technology.setLastUpdatedDate(new Date());
+
+        technology.setTechnicalDescription(getTechnicalDescription(request));
+        technology.setIntellectualProtection(getIntellectualProtection(request));
+        technology.setPatentabilityAnalysis(getPatentabilityAnalysis(request));
+        technology.setMarketAnalysis(getMarketAnalysis(request));
+
+        repository.save(technology);
+    }
+
 
     private static IntellectualProtection getIntellectualProtection(RegisterTechnologyRequest request) {
         return IntellectualProtection

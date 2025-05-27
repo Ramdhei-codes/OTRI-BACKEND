@@ -1,5 +1,6 @@
 package com.ucaldas.otri.api.controllers;
 
+import com.ucaldas.otri.application.shared.exceptions.ApplicationException;
 import com.ucaldas.otri.application.technologies.models.RegisterTechnologyRequest;
 import com.ucaldas.otri.application.technologies.models.TechnologySummaryResponse;
 import com.ucaldas.otri.application.technologies.models.ViewTechnologyResponse;
@@ -8,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
 import java.util.UUID;
 import java.util.List;
 
@@ -23,7 +25,6 @@ public class TechnologiesController {
         return ResponseEntity.ok(service.register(request));
     }
 
-
     @GetMapping("/view")
     public ResponseEntity<ViewTechnologyResponse> view(UUID id){
         return ResponseEntity.ok(service.view(id));
@@ -33,4 +34,20 @@ public class TechnologiesController {
     public ResponseEntity<List<TechnologySummaryResponse>> listAll() {
         return ResponseEntity.ok(service.listAll());
     }
+
+    @PostMapping("/update")
+    public ResponseEntity<Map<String, String>> update(@RequestParam UUID id, @RequestBody RegisterTechnologyRequest request) {
+        try {
+            service.updateTechnology(id, request);
+            return ResponseEntity.ok(Map.of("message", "Tecnología actualizada exitosamente"));
+        } catch (ApplicationException e) {
+            return ResponseEntity.badRequest().body(Map.of("message", "No se pudo actualizar la tecnología: " + e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(Map.of("message", "Error inesperado al actualizar la tecnología"));
+        }
+    }
+
+
+
+
 }

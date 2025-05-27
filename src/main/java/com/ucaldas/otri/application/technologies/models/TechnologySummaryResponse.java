@@ -15,6 +15,6 @@ import java.util.UUID;
 public class TechnologySummaryResponse {
     private UUID technologyId;
     private String resultName;
-    private Date createdDate;
+    private String responsibleGroup;
     private Date lastUpdatedDate;
 }

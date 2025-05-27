@@ -86,7 +86,7 @@ public class TechnologiesService {
                 .map(tech -> TechnologySummaryResponse.builder()
                         .technologyId(tech.getId())
                         .resultName(tech.getResultName())
-                        .createdDate(tech.getCreatedDate())
+                        .responsibleGroup(tech.getResponsibleGroup())
                         .lastUpdatedDate(tech.getLastUpdatedDate())
                         .build())
                 .collect(Collectors.toList()

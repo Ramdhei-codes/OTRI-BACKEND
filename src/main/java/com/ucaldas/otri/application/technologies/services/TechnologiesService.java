@@ -91,6 +91,7 @@ public class TechnologiesService {
                         .resultName(tech.getResultName())
                         .responsibleGroup(tech.getResponsibleGroup())
                         .lastUpdatedDate(tech.getLastUpdatedDate())
+                        .status(tech.getStatus())
                         .build())
                 .collect(Collectors.toList()
                 );

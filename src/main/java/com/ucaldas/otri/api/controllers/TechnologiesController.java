@@ -1,6 +1,7 @@
 package com.ucaldas.otri.api.controllers;
 
 import com.ucaldas.otri.application.technologies.models.RegisterTechnologyRequest;
+import com.ucaldas.otri.application.technologies.models.TechnologySummaryResponse;
 import com.ucaldas.otri.application.technologies.models.ViewTechnologyResponse;
 import com.ucaldas.otri.application.technologies.services.TechnologiesService;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/technologies")
@@ -26,5 +28,10 @@ public class TechnologiesController {
     @GetMapping("/view")
     public ResponseEntity<ViewTechnologyResponse> view(UUID id){
         return ResponseEntity.ok(service.view(id));
+    }
+
+    @GetMapping("/list")
+    public ResponseEntity<List<TechnologySummaryResponse>> listAll() {
+        return ResponseEntity.ok(service.listAll());
     }
 }

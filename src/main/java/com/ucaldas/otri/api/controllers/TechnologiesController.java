@@ -29,7 +29,7 @@ public class TechnologiesController {
     }
 
     @GetMapping("/view")
-    public ResponseEntity<ViewTechnologyResponse> view(UUID id){
+    public ResponseEntity<ViewTechnologyResponse> view(@RequestParam UUID id){
         return ResponseEntity.ok(service.view(id));
     }
 

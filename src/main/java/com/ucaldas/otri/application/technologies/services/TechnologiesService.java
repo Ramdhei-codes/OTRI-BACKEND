@@ -42,42 +42,43 @@ public class TechnologiesService {
         return savedTechnology.getId().toString();
     }
 
-    public ViewTechnologyResponse view(UUID technologyId){
-        Technology technology = repository.findById(technologyId).orElseThrow( () ->
-                new ApplicationException(
-                        "No se encontraron resultados",
-                        ErrorCodes.VALIDATION_ERROR
-                )
-        );
+    public ViewTechnologyResponse view(UUID technologyId) {
+        Technology technology = repository.findById(technologyId)
+                .orElseThrow(() -> new ApplicationException("No se encontraron resultados", ErrorCodes.VALIDATION_ERROR));
 
-        return ViewTechnologyResponse
-                .builder()
+        TechnicalDescription td = technology.getTechnicalDescription();
+        IntellectualProtection ip = technology.getIntellectualProtection();
+        PatentabilityAnalysis pa = technology.getPatentabilityAnalysis();
+        MarketAnalysis ma = technology.getMarketAnalysis();
+
+        return ViewTechnologyResponse.builder()
                 .technologyId(technology.getId())
                 .resultName(technology.getResultName())
                 .responsibleGroup(technology.getResponsibleGroup())
-                .functionalSummary(technology.getTechnicalDescription().getFunctionalSummary())
-                .problemSolved(technology.getTechnicalDescription().getProblemSolved())
-                .trlLevel(technology.getTechnicalDescription().getTrlLevel())
-                .economicSector(technology.getTechnicalDescription().getEconomicSector())
-                .hasCurrentProtection(technology.getIntellectualProtection().isHasCurrentProtection())
-                .suggestedProtectionType(technology.getIntellectualProtection().getSuggestedProtectionType())
-                .hasBeenDisclosed(technology.getIntellectualProtection().isHasBeenDisclosed())
-                .disclosedDate(technology.getIntellectualProtection().getDisclosedDate())
-                .inventiveLevel(technology.getPatentabilityAnalysis().getInventiveLevel())
-                .noveltyDescription(technology.getPatentabilityAnalysis().getNoveltyDescription())
-                .hasIndustrialApplication(technology.getPatentabilityAnalysis().isHasIndustrialApplication())
-                .teamAvailableForTransfer(technology.getPatentabilityAnalysis().isTeamAvailableForTransfer())
-                .competitiveAdvantage(technology.getPatentabilityAnalysis().getCompetitiveAdvantage())
-                .crlLevel(technology.getPatentabilityAnalysis().getCrlLevel())
-                .teamAvailableToCollaborate(technology.getPatentabilityAnalysis().isTeamAvailableToCollaborate())
-                .hasScalingCapability(technology.getPatentabilityAnalysis().isHasScalingCapability())
-                .competitorsNational(technology.getMarketAnalysis().getCompetitorsNational())
-                .competitorsInternational(technology.getMarketAnalysis().getCompetitorsInternational())
-                .substituteTechnologies(technology.getMarketAnalysis().getSubstituteTechnologies())
-                .marketSize(technology.getMarketAnalysis().getMarketSize())
-                .applicationSectors(technology.getMarketAnalysis().getApplicationSectors())
-                .preliminaryInterest(technology.getMarketAnalysis().getPreliminaryInterest())
+                .functionalSummary(td != null ? td.getFunctionalSummary() : null)
+                .problemSolved(td != null ? td.getProblemSolved() : null)
+                .trlLevel(td != null ? td.getTrlLevel() : 0)
+                .economicSector(td != null ? td.getEconomicSector() : null)
+                .hasCurrentProtection(ip != null && ip.isHasCurrentProtection())
+                .suggestedProtectionType(ip != null ? ip.getSuggestedProtectionType() : null)
+                .hasBeenDisclosed(ip != null && ip.isHasBeenDisclosed())
+                .disclosedDate(ip != null ? ip.getDisclosedDate() : null)
+                .inventiveLevel(pa != null ? pa.getInventiveLevel() : null)
+                .noveltyDescription(pa != null ? pa.getNoveltyDescription() : null)
+                .hasIndustrialApplication(pa != null && pa.isHasIndustrialApplication())
+                .teamAvailableForTransfer(pa != null && pa.isTeamAvailableForTransfer())
+                .competitiveAdvantage(pa != null ? pa.getCompetitiveAdvantage() : null)
+                .crlLevel(pa != null ? pa.getCrlLevel() : 0)
+                .teamAvailableToCollaborate(pa != null && pa.isTeamAvailableToCollaborate())
+                .hasScalingCapability(pa != null && pa.isHasScalingCapability())
+                .competitorsNational(ma != null ? ma.getCompetitorsNational() : null)
+                .competitorsInternational(ma != null ? ma.getCompetitorsInternational() : null)
+                .substituteTechnologies(ma != null ? ma.getSubstituteTechnologies() : null)
+                .marketSize(ma != null ? ma.getMarketSize() : null)
+                .applicationSectors(ma != null ? ma.getApplicationSectors() : null)
+                .preliminaryInterest(ma != null ? ma.getPreliminaryInterest() : null)
                 .transferMethod(technology.getTransferMethod())
+                .recommendedActions(technology.getRecommendedActions())
                 .lastUpdatedDate(technology.getLastUpdatedDate())
                 .createdDate(technology.getCreatedDate())
                 .status(technology.getStatus())

@@ -12,20 +12,21 @@ import java.util.List;
 public class BuildPromptService {
 
     public static String buildEvaluationPrompt(Technology technology, int level, ReadinessType type, List<Question> questions){
-        StringBuilder sb = new StringBuilder();
-        buildTechnologyInfo(technology, level, type, sb);
-        buildQuestionsInfo(questions, sb);
-        sb.append(Constants.evaluationPromptFormat);
-        return sb.toString();
+        return buildTechnologyInfo(technology, level, type) +
+                buildQuestionsInfo(questions) +
+                Constants.evaluationPromptFormat;
     }
 
-    public static void buildQuestionsInfo(List<Question> questions, StringBuilder sb){
+    public static String buildQuestionsInfo(List<Question> questions){
+        StringBuilder sb = new StringBuilder();
         for (Question question : questions){
             sb.append(question.getContent()).append("\n");
         }
+        return sb.toString();
     }
 
-    private static void buildTechnologyInfo(Technology technology, int level, ReadinessType type, StringBuilder sb) {
+    private static String buildTechnologyInfo(Technology technology, int level, ReadinessType type) {
+        StringBuilder sb = new StringBuilder();
         sb.append(Constants.promptHeader);
         sb.append("Sección - Identificación del resultado\n");
         sb.append("Nombre del resultado: ").append(technology.getResultName()).append("\n");
@@ -84,6 +85,8 @@ public class BuildPromptService {
         sb.append(String.format("Responde las siguientes preguntas que corresponden a la medición del nivel de %s %d: ", type, level))
                 .append(technology.getMarketAnalysis().getApplicationSectors())
                 .append("\n");
+
+        return sb.toString();
     }
 
     private static String MapBoolean(boolean value){

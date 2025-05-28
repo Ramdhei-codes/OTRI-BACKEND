@@ -47,7 +47,16 @@ public class TechnologiesController {
         }
     }
 
-
-
+    @DeleteMapping("/delete")
+    public ResponseEntity<Map<String, String>> delete(@RequestParam UUID id) {
+        try {
+            service.deleteTechnology(id);
+            return ResponseEntity.ok(Map.of("message", "Tecnología eliminada exitosamente"));
+        } catch (ApplicationException e) {
+            return ResponseEntity.badRequest().body(Map.of("message", "No se pudo eliminar la tecnología: " + e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(Map.of("message", "Error inesperado al eliminar la tecnología"));
+        }
+    }
 
 }

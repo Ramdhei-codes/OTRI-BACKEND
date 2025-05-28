@@ -116,6 +116,11 @@ public class TechnologiesService {
         repository.save(technology);
     }
 
+    public void deleteTechnology(UUID id) {
+        Technology technology = repository.findById(id).orElseThrow(() ->
+                new ApplicationException("Tecnología no encontrada", ErrorCodes.VALIDATION_ERROR));
+        repository.delete(technology);
+    }
 
     private static IntellectualProtection getIntellectualProtection(RegisterTechnologyRequest request) {
         return IntellectualProtection

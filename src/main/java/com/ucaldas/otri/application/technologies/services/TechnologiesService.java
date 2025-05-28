@@ -1,16 +1,23 @@
 package com.ucaldas.otri.application.technologies.services;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.ucaldas.otri.application.shared.exceptions.ApplicationException;
 import com.ucaldas.otri.application.shared.exceptions.ErrorCodes;
-import com.ucaldas.otri.application.technologies.models.RegisterTechnologyRequest;
-import com.ucaldas.otri.application.technologies.models.TechnologySummaryResponse;
-import com.ucaldas.otri.application.technologies.models.ViewTechnologyResponse;
+import com.ucaldas.otri.application.shared.services.BuildPromptService;
+import com.ucaldas.otri.application.shared.services.IAiService;
+import com.ucaldas.otri.application.shared.services.IJSONService;
+import com.ucaldas.otri.application.technologies.models.*;
 import com.ucaldas.otri.domain.technologies.entities.*;
+import com.ucaldas.otri.domain.technologies.enums.ReadinessType;
 import com.ucaldas.otri.domain.technologies.enums.TechnologyStatus;
+import com.ucaldas.otri.domain.technologies.repositories.AnswersRepository;
+import com.ucaldas.otri.domain.technologies.repositories.QuestionsRepository;
 import com.ucaldas.otri.domain.technologies.repositories.TechnologiesRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -20,6 +27,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TechnologiesService {
     private final TechnologiesRepository repository;
+    private final QuestionsRepository questionsRepository;
+    private final AnswersRepository answersRepository;
+    private final IAiService aiService;
+    private final IJSONService jsonService;
 
     public String register(RegisterTechnologyRequest request){
         TechnicalDescription technicalDescription = getTechnicalDescription(request);
@@ -115,6 +126,42 @@ public class TechnologiesService {
         repository.save(technology);
     }
 
+    public List<Answer> getLevelAnswers(UUID technologyId, int level, ReadinessType type){
+        Technology technology = repository.findById(technologyId).orElseThrow( () ->
+                new ApplicationException(
+                        "No se encontraron resultados",
+                        ErrorCodes.VALIDATION_ERROR
+                )
+        );
+        List<Question> levelQuestions = questionsRepository.findByLevelAndType(level, type);
+        String evaluationPrompt = BuildPromptService.buildEvaluationPrompt(technology, level, type, levelQuestions);
+
+        String evaluationResponse = aiService.chat(evaluationPrompt);
+        try {
+            List<PromptAnswer> promptAnswers = jsonService.fromJson(evaluationResponse, new TypeReference<List<PromptAnswer>>() {});
+            return saveAndMapAnswers(technology, level, type, promptAnswers);
+        } catch (JsonProcessingException e) {
+            throw new ApplicationException(ErrorCodes.VALIDATION_ERROR, "Error convirtiendo la respuesta");
+        }
+
+    }
+
+    private List<Answer> saveAndMapAnswers(Technology technology, int level, ReadinessType type, List<PromptAnswer> answers){
+        List<Answer> result = new ArrayList<>();
+
+        for (PromptAnswer answer : answers){
+            result.add(Answer
+                            .builder()
+                            .content(answer.isAnswer())
+                            .checked(false)
+                            .question(answer.getQuestion())
+                            .level(level)
+                            .type(type)
+                            .build());
+        }
+
+        return answersRepository.saveAll(result);
+    }
 
     private static IntellectualProtection getIntellectualProtection(RegisterTechnologyRequest request) {
         return IntellectualProtection

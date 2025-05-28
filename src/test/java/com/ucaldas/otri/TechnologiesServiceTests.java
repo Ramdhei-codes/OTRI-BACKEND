@@ -1,20 +1,23 @@
 package com.ucaldas.otri;
 
 import com.ucaldas.otri.application.shared.exceptions.ApplicationException;
+import com.ucaldas.otri.application.shared.services.IAiService;
+import com.ucaldas.otri.application.shared.services.IJSONService;
 import com.ucaldas.otri.application.technologies.models.RegisterTechnologyRequest;
 import com.ucaldas.otri.application.technologies.models.TechnologySummaryResponse;
 import com.ucaldas.otri.application.technologies.models.ViewTechnologyResponse;
 import com.ucaldas.otri.application.technologies.services.TechnologiesService;
-import com.ucaldas.otri.domain.technologies.entities.Technology;
+import com.ucaldas.otri.domain.technologies.entities.*;
+import com.ucaldas.otri.domain.technologies.enums.InventiveLevel;
+import com.ucaldas.otri.domain.technologies.enums.PreliminaryInterest;
 import com.ucaldas.otri.domain.technologies.enums.TechnologyStatus;
+import com.ucaldas.otri.domain.technologies.repositories.AnswersRepository;
+import com.ucaldas.otri.domain.technologies.repositories.QuestionsRepository;
 import com.ucaldas.otri.domain.technologies.repositories.TechnologiesRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Date;
@@ -31,21 +34,42 @@ public class TechnologiesServiceTests {
     @Mock
     private TechnologiesRepository repository;
 
-    @InjectMocks
-    private TechnologiesService service;
+    @Mock
+    private QuestionsRepository questionsRepository;
+    @Mock
+    private AnswersRepository answersRepository;
 
     @Captor
     private ArgumentCaptor<Technology> technologyArgumentCaptor;
 
+    @Mock
+    private IAiService aiService;
+
+    @Mock
+    private IJSONService jsonService;
+
+    @InjectMocks
+    private TechnologiesService service;
+
     @BeforeEach
     void setUp(){
-        service = new TechnologiesService(repository);
+        service = new TechnologiesService(repository, questionsRepository, answersRepository, aiService, jsonService);
     }
 
     @Test
     void register_ShouldCreateNewTechnology(){
-        RegisterTechnologyRequest request = new RegisterTechnologyRequest();
-        request.setResultName("Rizoar");
+
+        RegisterTechnologyRequest request = RegisterTechnologyRequest
+                .builder()
+                .resultName("Rizoar")
+                .build();
+
+        Technology savedTechnologyMock = Technology.builder()
+                .id(UUID.randomUUID()) // simulate what would happen in a real DB save
+                .resultName("Rizoar")
+                .build();
+
+        when(repository.save(Mockito.any(Technology.class))).thenReturn(savedTechnologyMock);
 
         String result = service.register(request);
 
@@ -56,20 +80,62 @@ public class TechnologiesServiceTests {
     }
 
     @Test
-    void view_ShouldReturnResponse_WhenTechnologyExists(){
-        UUID technologyId = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
-        Technology technology = Technology.builder()
-                .id(technologyId)
-                .resultName("Rizoar")
+    void view_ShouldReturnResponse_WhenTechnologyExists() {
+        UUID techId = UUID.randomUUID();
+
+        TechnicalDescription technicalDescription = TechnicalDescription.builder()
+                .functionalSummary("Summary")
+                .problemSolved("Problem")
+                .trlLevel(6)
+                .economicSector("Sector")
                 .build();
-        when(repository.findById(technologyId)).thenReturn(
-                Optional.of(technology)
-        );
 
-        ViewTechnologyResponse response = service.view(technologyId);
+        IntellectualProtection intellectualProtection = IntellectualProtection.builder()
+                .hasCurrentProtection(true)
+                .suggestedProtectionType("Patent")
+                .hasBeenDisclosed(false)
+                .disclosedDate(null)
+                .build();
 
-        assertEquals(technologyId, response.getTechnologyId());
-        assertEquals("Rizoar", response.getResultName());
+        PatentabilityAnalysis patentabilityAnalysis = PatentabilityAnalysis.builder()
+                .inventiveLevel(InventiveLevel.HIGH)
+                .noveltyDescription("Unique tech")
+                .hasIndustrialApplication(true)
+                .teamAvailableForTransfer(true)
+                .competitiveAdvantage("Strong")
+                .crlLevel(3)
+                .teamAvailableToCollaborate(true)
+                .hasScalingCapability(true)
+                .build();
+
+        MarketAnalysis marketAnalysis = MarketAnalysis.builder()
+                .competitorsNational("None")
+                .competitorsInternational("Few")
+                .substituteTechnologies("None known")
+                .marketSize("Large")
+                .applicationSectors("Healthcare")
+                .preliminaryInterest(PreliminaryInterest.YES)
+                .build();
+
+        Technology mockTechnology = Technology.builder()
+                .id(techId)
+                .resultName("TechX")
+                .responsibleGroup("Group A")
+                .technicalDescription(technicalDescription)
+                .intellectualProtection(intellectualProtection)
+                .patentabilityAnalysis(patentabilityAnalysis)
+                .marketAnalysis(marketAnalysis)
+                .transferMethod("Licensing")
+                .createdDate(new Date())
+                .status(TechnologyStatus.ACTIVE)
+                .build();
+
+        when(repository.findById(techId)).thenReturn(Optional.of(mockTechnology));
+
+        ViewTechnologyResponse response = service.view(techId);
+
+        assertEquals("TechX", response.getResultName());
+        assertEquals("Summary", response.getFunctionalSummary());
     }
 
     @Test

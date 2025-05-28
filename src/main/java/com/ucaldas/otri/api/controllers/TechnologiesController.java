@@ -3,8 +3,11 @@ package com.ucaldas.otri.api.controllers;
 import com.ucaldas.otri.application.shared.exceptions.ApplicationException;
 import com.ucaldas.otri.application.technologies.models.RegisterTechnologyRequest;
 import com.ucaldas.otri.application.technologies.models.TechnologySummaryResponse;
+import com.ucaldas.otri.application.technologies.models.ViewLevelAnswersResponse;
 import com.ucaldas.otri.application.technologies.models.ViewTechnologyResponse;
 import com.ucaldas.otri.application.technologies.services.TechnologiesService;
+import com.ucaldas.otri.domain.technologies.entities.Answer;
+import com.ucaldas.otri.domain.technologies.enums.ReadinessType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -47,7 +50,14 @@ public class TechnologiesController {
         }
     }
 
-
+    @GetMapping("/rate_level")
+    public ResponseEntity<List<Answer>> rateLevel(
+            @RequestParam UUID technologyId,
+            @RequestParam int level,
+            @RequestParam ReadinessType type
+    ){
+        return ResponseEntity.ok(service.getLevelAnswers(technologyId, level, type));
+    }
 
 
 }

@@ -13,4 +13,11 @@ public class AiService implements IAiService {
         chatClient = builder.build();
     }
 
+    @Override
+    public String chat(String prompt) {
+        return chatClient
+                .prompt(prompt)
+                .call()
+                .content();
+    }
 }

@@ -74,7 +74,7 @@ public class TechnologiesService {
                 .suggestedProtectionType(ip != null ? ip.getSuggestedProtectionType() : null)
                 .hasBeenDisclosed(ip != null && ip.isHasBeenDisclosed())
                 .disclosedDate(ip != null ? ip.getDisclosedDate() : null)
-                .inventiveLevel(pa != null ? pa.getInventiveLevel() : null)
+                .inventiveLevel(pa != null && pa.getInventiveLevel() != null ? pa.getInventiveLevel().ordinal() : null)
                 .noveltyDescription(pa != null ? pa.getNoveltyDescription() : null)
                 .hasIndustrialApplication(pa != null && pa.isHasIndustrialApplication())
                 .teamAvailableForTransfer(pa != null && pa.isTeamAvailableForTransfer())
@@ -87,7 +87,7 @@ public class TechnologiesService {
                 .substituteTechnologies(ma != null ? ma.getSubstituteTechnologies() : null)
                 .marketSize(ma != null ? ma.getMarketSize() : null)
                 .applicationSectors(ma != null ? ma.getApplicationSectors() : null)
-                .preliminaryInterest(ma != null ? ma.getPreliminaryInterest() : null)
+                .preliminaryInterest(ma != null && ma.getPreliminaryInterest() != null ? ma.getPreliminaryInterest().ordinal() : null)
                 .transferMethod(technology.getTransferMethod())
                 .recommendedActions(technology.getRecommendedActions())
                 .lastUpdatedDate(technology.getLastUpdatedDate())
@@ -162,6 +162,11 @@ public class TechnologiesService {
         }
 
         return answersRepository.saveAll(result);
+    }
+    public void deleteTechnology(UUID id) {
+        Technology technology = repository.findById(id).orElseThrow(() ->
+                new ApplicationException("Tecnología no encontrada", ErrorCodes.VALIDATION_ERROR));
+        repository.delete(technology);
     }
 
     private static IntellectualProtection getIntellectualProtection(RegisterTechnologyRequest request) {

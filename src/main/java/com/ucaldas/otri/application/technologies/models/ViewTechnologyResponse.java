@@ -27,7 +27,7 @@ public class ViewTechnologyResponse {
     private String suggestedProtectionType;
     private boolean hasBeenDisclosed;
     private Date disclosedDate;
-    private InventiveLevel inventiveLevel;
+    private Integer inventiveLevel;
     private String noveltyDescription;
     private boolean hasIndustrialApplication;
     private boolean teamAvailableForTransfer;
@@ -40,7 +40,7 @@ public class ViewTechnologyResponse {
     private String substituteTechnologies;
     private String marketSize;
     private String applicationSectors;
-    private PreliminaryInterest preliminaryInterest;
+    private Integer preliminaryInterest;
     private String transferMethod;
     private String recommendedActions;
     private Date lastUpdatedDate;

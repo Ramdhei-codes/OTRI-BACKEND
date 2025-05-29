@@ -33,6 +33,7 @@ public class Technology {
     @Embedded
     private MarketAnalysis marketAnalysis;
     private String transferMethod;
+    @Column(columnDefinition = "TEXT")
     private String recommendedActions;
     private Date createdDate;
     private Date lastUpdatedDate;

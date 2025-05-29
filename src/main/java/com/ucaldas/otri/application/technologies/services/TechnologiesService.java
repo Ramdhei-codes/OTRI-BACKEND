@@ -124,6 +124,14 @@ public class TechnologiesService {
     }
 
     public void updateTechnologyAnswers(List<ViewLevelAnswersResponse> answersResponseList){
+        double percentageOfPositiveAnswersChecked = answersResponseList.stream()
+                .mapToDouble(ans -> ans.isAnswer() && ans.isChecked() ? 1.0 : 0)
+                .average()
+                .orElse(0.0);
+
+        if (percentageOfPositiveAnswersChecked >= 0.9){
+            setReadinessLevel(answersResponseList);
+        }
         for (ViewLevelAnswersResponse answersResponse : answersResponseList){
             Answer answer = answersRepository.findById(answersResponse.getId())
                     .orElseThrow(() -> new ApplicationException("No se encontraron resultados", ErrorCodes.VALIDATION_ERROR));
@@ -131,6 +139,19 @@ public class TechnologiesService {
             answer.setContent(answersResponse.isAnswer());
             answersRepository.save(answer);
         }
+    }
+
+    private void setReadinessLevel(List<ViewLevelAnswersResponse> answersResponseList) {
+        ViewLevelAnswersResponse answer = answersResponseList.get(0);
+        Technology technology = repository.findById(answer.getTechnologyId())
+                .orElseThrow(() -> new ApplicationException("No se encontraron resultados", ErrorCodes.VALIDATION_ERROR));
+        if (answer.getType() == ReadinessType.TRL){
+            technology.getTechnicalDescription().setTrlLevel(answer.getLevel());
+        } else{
+            technology.getPatentabilityAnalysis().setCrlLevel(answer.getLevel());
+        }
+        technology.setLastUpdatedDate(new Date());
+        repository.save(technology);
     }
 
     public List<ViewLevelAnswersResponse> getLevelAnswers(UUID technologyId, int level, ReadinessType type){
@@ -154,6 +175,20 @@ public class TechnologiesService {
         return answers.stream()
                 .map(this::mapAnswersToResponse)
                 .collect(Collectors.groupingBy(ViewLevelAnswersResponse::getLevel));
+    }
+
+    public String getRecommendedActions(UUID technologyId){
+        Technology technology = repository.findById(technologyId).orElseThrow( () ->
+                new ApplicationException(
+                        "No se encontraron resultados",
+                        ErrorCodes.VALIDATION_ERROR
+                )
+        );
+
+        String recommendedActions = aiService.chat(BuildPromptService.buildRecommendationsPrompt(technology));
+        technology.setRecommendedActions(recommendedActions);
+        repository.save(technology);
+        return recommendedActions;
     }
 
     private ViewLevelAnswersResponse mapAnswersToResponse(Answer answer){

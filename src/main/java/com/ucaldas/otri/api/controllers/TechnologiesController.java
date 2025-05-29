@@ -84,4 +84,9 @@ public class TechnologiesController {
             ){
         return ResponseEntity.ok(service.viewTechnologyAnswers(technologyId, type));
     }
+
+    @GetMapping("/recommendations")
+    public ResponseEntity<String> getRecommendations(@RequestParam UUID technologyId){
+        return ResponseEntity.ok(service.getRecommendedActions(technologyId));
+    }
 }

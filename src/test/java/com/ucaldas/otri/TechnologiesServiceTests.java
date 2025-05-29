@@ -45,15 +45,12 @@ public class TechnologiesServiceTests {
     @Mock
     private IAiService aiService;
 
-    @Mock
-    private IJSONService jsonService;
-
     @InjectMocks
     private TechnologiesService service;
 
     @BeforeEach
     void setUp(){
-        service = new TechnologiesService(repository, questionsRepository, answersRepository, aiService, jsonService);
+        service = new TechnologiesService(repository, questionsRepository, answersRepository, aiService);
     }
 
     @Test

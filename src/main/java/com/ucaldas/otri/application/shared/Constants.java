@@ -6,10 +6,6 @@ public final class Constants {
             
             """;
     public static final String evaluationPromptFormat = """
-            La respuesta debe ser ÚNICAMENTE una lista de objetos JSON en el siguiente formato:
-            {\\n" +
-                "  \\"question\\": \\"Texto de la pregunta\\",\\n" +
-                "  \\"answer\\": true\\n" +
-                "}
+            La respuesta debe ser ÚNICAMENTE un texto donde cada línea contenga la pregunta y su respuesta (de sí o no de acuerdo a si la tecnología satisface la pregunta) separados por un punto y coma, ejemplo: El cliente está identificado;Sí
             """;
 }

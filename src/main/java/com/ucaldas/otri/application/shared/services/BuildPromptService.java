@@ -83,10 +83,13 @@ public class BuildPromptService {
                 .append(technology.getTransferMethod())
                 .append("\n");
         sb.append(String.format("Responde las siguientes preguntas que corresponden a la medición del nivel de %s %d: ", type, level))
-                .append(technology.getMarketAnalysis().getApplicationSectors())
                 .append("\n");
 
         return sb.toString();
+    }
+
+    public static String[] splitAnswersResponse(String content){
+        return content.split("\n");
     }
 
     private static String MapBoolean(boolean value){

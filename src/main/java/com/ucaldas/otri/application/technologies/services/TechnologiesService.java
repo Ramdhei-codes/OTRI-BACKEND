@@ -30,7 +30,6 @@ public class TechnologiesService {
     private final QuestionsRepository questionsRepository;
     private final AnswersRepository answersRepository;
     private final IAiService aiService;
-    private final IJSONService jsonService;
 
     public String register(RegisterTechnologyRequest request){
         TechnicalDescription technicalDescription = getTechnicalDescription(request);
@@ -127,7 +126,17 @@ public class TechnologiesService {
         repository.save(technology);
     }
 
-    public List<Answer> getLevelAnswers(UUID technologyId, int level, ReadinessType type){
+    public void updateTechnologyAnswers(List<ViewLevelAnswersResponse> answersResponseList){
+        for (ViewLevelAnswersResponse answersResponse : answersResponseList){
+            Answer answer = answersRepository.findById(answersResponse.getId())
+                    .orElseThrow(() -> new ApplicationException("No se encontraron resultados", ErrorCodes.VALIDATION_ERROR));
+            answer.setChecked(answersResponse.isChecked());
+            answer.setContent(answersResponse.isAnswer());
+            answersRepository.save(answer);
+        }
+    }
+
+    public List<ViewLevelAnswersResponse> getLevelAnswers(UUID technologyId, int level, ReadinessType type){
         Technology technology = repository.findById(technologyId).orElseThrow( () ->
                 new ApplicationException(
                         "No se encontraron resultados",
@@ -138,31 +147,45 @@ public class TechnologiesService {
         String evaluationPrompt = BuildPromptService.buildEvaluationPrompt(technology, level, type, levelQuestions);
 
         String evaluationResponse = aiService.chat(evaluationPrompt);
-        try {
-            List<PromptAnswer> promptAnswers = jsonService.fromJson(evaluationResponse, new TypeReference<List<PromptAnswer>>() {});
-            return saveAndMapAnswers(technology, level, type, promptAnswers);
-        } catch (JsonProcessingException e) {
-            throw new ApplicationException(ErrorCodes.VALIDATION_ERROR, "Error convirtiendo la respuesta");
-        }
 
+        return saveAndMapAnswers(technology, level, type, BuildPromptService.splitAnswersResponse(evaluationResponse));
     }
 
-    private List<Answer> saveAndMapAnswers(Technology technology, int level, ReadinessType type, List<PromptAnswer> answers){
+    private List<ViewLevelAnswersResponse> saveAndMapAnswers(Technology technology, int level, ReadinessType type, String[] answers){
         List<Answer> result = new ArrayList<>();
-
-        for (PromptAnswer answer : answers){
+        answersRepository.deleteByTechnologyIdAndLevelAndType(technology.getId(), level, type);
+        for (String answer : answers){
+            String[] splittedAnswer = answer.split(";");
             result.add(Answer
                             .builder()
-                            .content(answer.isAnswer())
+                            .technology(technology)
+                            .content(splittedAnswer[1].trim().equalsIgnoreCase("Sí"))
                             .checked(false)
-                            .question(answer.getQuestion())
+                            .question(splittedAnswer[0].trim())
                             .level(level)
                             .type(type)
                             .build());
         }
-
-        return answersRepository.saveAll(result);
+        return MapAnswersForResponse(answersRepository.saveAll(result));
     }
+
+    private List<ViewLevelAnswersResponse> MapAnswersForResponse(List<Answer> answers){
+        List<ViewLevelAnswersResponse> responseList = new ArrayList<>();
+        for (Answer answer : answers){
+            responseList.add(ViewLevelAnswersResponse
+                    .builder()
+                            .id(answer.getId())
+                            .technologyId(answer.getTechnology().getId())
+                            .question(answer.getQuestion())
+                            .answer(answer.isContent())
+                            .checked(answer.isChecked())
+                            .level(answer.getLevel())
+                            .type(answer.getType())
+                    .build());
+        }
+        return  responseList;
+    }
+
     public void deleteTechnology(UUID id) {
         Technology technology = repository.findById(id).orElseThrow(() ->
                 new ApplicationException("Tecnología no encontrada", ErrorCodes.VALIDATION_ERROR));

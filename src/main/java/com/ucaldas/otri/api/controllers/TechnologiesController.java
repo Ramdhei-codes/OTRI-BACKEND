@@ -62,7 +62,7 @@ public class TechnologiesController {
         }
     }
     @GetMapping("/rate_level")
-    public ResponseEntity<List<Answer>> rateLevel(
+    public ResponseEntity<List<ViewLevelAnswersResponse>> rateLevel(
             @RequestParam UUID technologyId,
             @RequestParam int level,
             @RequestParam ReadinessType type
@@ -70,5 +70,9 @@ public class TechnologiesController {
         return ResponseEntity.ok(service.getLevelAnswers(technologyId, level, type));
     }
 
-
+    @PutMapping("/save_answers")
+    public ResponseEntity<Void> saveAnswers(@RequestBody List<ViewLevelAnswersResponse> answers){
+        service.updateTechnologyAnswers(answers);
+        return ResponseEntity.ok().build();
+    }
 }

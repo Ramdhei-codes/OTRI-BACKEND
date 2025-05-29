@@ -75,4 +75,13 @@ public class TechnologiesController {
         service.updateTechnologyAnswers(answers);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/view_answers")
+    public ResponseEntity<Map<Integer, List<ViewLevelAnswersResponse>>> viewTechnologyAnswers
+            (
+                    @RequestParam UUID technologyId,
+                    @RequestParam ReadinessType type
+            ){
+        return ResponseEntity.ok(service.viewTechnologyAnswers(technologyId, type));
+    }
 }

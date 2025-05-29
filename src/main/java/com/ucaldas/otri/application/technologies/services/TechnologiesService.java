@@ -17,11 +17,8 @@ import com.ucaldas.otri.domain.technologies.repositories.TechnologiesRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -149,6 +146,26 @@ public class TechnologiesService {
         String evaluationResponse = aiService.chat(evaluationPrompt);
 
         return saveAndMapAnswers(technology, level, type, BuildPromptService.splitAnswersResponse(evaluationResponse));
+    }
+
+    public Map<Integer, List<ViewLevelAnswersResponse>> viewTechnologyAnswers(UUID technologyId, ReadinessType type){
+        List<Answer> answers = answersRepository.findByTechnologyIdAndType(technologyId, type);
+
+        return answers.stream()
+                .map(this::mapAnswersToResponse)
+                .collect(Collectors.groupingBy(ViewLevelAnswersResponse::getLevel));
+    }
+
+    private ViewLevelAnswersResponse mapAnswersToResponse(Answer answer){
+        return ViewLevelAnswersResponse.builder()
+                .id(answer.getId())
+                .technologyId(answer.getTechnology().getId())
+                .question(answer.getQuestion())
+                .answer(answer.isContent())
+                .checked(answer.isChecked())
+                .level(answer.getLevel())
+                .type(answer.getType())
+                .build();
     }
 
     private List<ViewLevelAnswersResponse> saveAndMapAnswers(Technology technology, int level, ReadinessType type, String[] answers){

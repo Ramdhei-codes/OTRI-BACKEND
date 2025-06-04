@@ -216,6 +216,7 @@ public class TechnologiesService {
                             .question(splittedAnswer[0].trim())
                             .level(level)
                             .type(type)
+                            .reason(splittedAnswer[2])
                             .build());
         }
         return MapAnswersForResponse(answersRepository.saveAll(result));
@@ -233,6 +234,7 @@ public class TechnologiesService {
                             .checked(answer.isChecked())
                             .level(answer.getLevel())
                             .type(answer.getType())
+                            .reason(answer.getReason())
                     .build());
         }
         return  responseList;

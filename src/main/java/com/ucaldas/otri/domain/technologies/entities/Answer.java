@@ -27,4 +27,5 @@ public class Answer {
     @ManyToOne
     @JoinColumn(name = "technologyId")
     private Technology technology;
+    private String reason;
 }

@@ -20,4 +20,5 @@ public class ViewLevelAnswersResponse {
     private boolean checked;
     private int level;
     private ReadinessType type;
+    private String reason;
 }

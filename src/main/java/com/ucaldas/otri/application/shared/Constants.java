@@ -6,7 +6,7 @@ public final class Constants {
             
             """;
     public static final String evaluationPromptFormat = """
-            La respuesta debe ser ÚNICAMENTE un texto donde cada línea contenga la pregunta y su respuesta (de sí o no de acuerdo a si la tecnología satisface la pregunta) separados por un punto y coma, ejemplo: El cliente está identificado;Sí
+            La respuesta debe ser ÚNICAMENTE un texto donde cada línea contenga la pregunta, su respuesta (de sí o no de acuerdo a si la tecnología satisface la pregunta) y su justificación en máximo 50 palabras separados por un punto y coma, ejemplo: El cliente está identificado;Sí;justificación
             """;
     public static final String recommendationsPromptFormat = """
             Dame una lista de recomendaciones en teniendo en cuenta que esta tecnología se encuentra actualmente en TRL %d y CRL %d en el siguiente formato en texto enriquecido con el propósito de enviarlo como respuesta a mi frontend:

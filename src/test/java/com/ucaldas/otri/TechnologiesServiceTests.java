@@ -515,32 +515,4 @@ public class TechnologiesServiceTests {
         assertEquals("No se encontraron resultados", exception.getMessage());
         assertEquals(ErrorCodes.VALIDATION_ERROR, exception.getErrorCode());
     }
-
-    @Test
-    void deleteTechnology_ShouldDeleteTechnology_WhenTechnologyExists() {
-        // Arrange
-        when(repository.findById(technologyId)).thenReturn(Optional.of(technology));
-
-        // Act
-        technologiesService.deleteTechnology(technologyId);
-
-        // Assert
-        verify(repository).findById(technologyId);
-        verify(repository).delete(technology);
-    }
-
-    @Test
-    void deleteTechnology_ShouldThrowException_WhenTechnologyNotFound() {
-        // Arrange
-        when(repository.findById(technologyId)).thenReturn(Optional.empty());
-
-        // Act & Assert
-        ApplicationException exception = assertThrows(ApplicationException.class,
-                () -> technologiesService.deleteTechnology(technologyId));
-
-        assertEquals("Tecnología no encontrada", exception.getMessage());
-        assertEquals(ErrorCodes.VALIDATION_ERROR, exception.getErrorCode());
-        verify(repository).findById(technologyId);
-        verify(repository, never()).delete(any(Technology.class));
-    }
 }

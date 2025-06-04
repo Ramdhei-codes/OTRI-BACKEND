@@ -238,10 +238,14 @@ public class TechnologiesService {
         return  responseList;
     }
 
-    public void deleteTechnology(UUID id) {
-        Technology technology = repository.findById(id).orElseThrow(() ->
-                new ApplicationException("Tecnología no encontrada", ErrorCodes.VALIDATION_ERROR));
-        repository.delete(technology);
+    public void changeStatus(UUID id, TechnologyStatus status) {
+        Technology technology = repository.findById(id)
+                .orElseThrow(() -> new ApplicationException("Tecnología no encontrada", ErrorCodes.VALIDATION_ERROR));
+
+        technology.setStatus(status);
+        technology.setLastUpdatedDate(new Date());
+
+        repository.save(technology);
     }
 
     private static IntellectualProtection getIntellectualProtection(RegisterTechnologyRequest request) {

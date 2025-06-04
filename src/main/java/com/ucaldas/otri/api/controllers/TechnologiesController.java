@@ -8,6 +8,7 @@ import com.ucaldas.otri.application.technologies.models.ViewTechnologyResponse;
 import com.ucaldas.otri.application.technologies.services.TechnologiesService;
 import com.ucaldas.otri.domain.technologies.entities.Answer;
 import com.ucaldas.otri.domain.technologies.enums.ReadinessType;
+import com.ucaldas.otri.domain.technologies.enums.TechnologyStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -50,17 +51,21 @@ public class TechnologiesController {
         }
     }
 
-    @DeleteMapping("/delete")
-    public ResponseEntity<Map<String, String>> delete(@RequestParam UUID id) {
+    @PutMapping("/change_status")
+    public ResponseEntity<Map<String, String>> changeStatus(
+            @RequestParam UUID technologyId,
+            @RequestParam TechnologyStatus status
+    ) {
         try {
-            service.deleteTechnology(id);
-            return ResponseEntity.ok(Map.of("message", "Tecnología eliminada exitosamente"));
+            service.changeStatus(technologyId, status);
+            return ResponseEntity.ok(Map.of("message", "Estado actualizado correctamente"));
         } catch (ApplicationException e) {
-            return ResponseEntity.badRequest().body(Map.of("message", "No se pudo eliminar la tecnología: " + e.getMessage()));
+            return ResponseEntity.badRequest().body(Map.of("message", "No se pudo cambiar el estado: " + e.getMessage()));
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(Map.of("message", "Error inesperado al eliminar la tecnología"));
+            return ResponseEntity.internalServerError().body(Map.of("message", "Error inesperado al cambiar el estado"));
         }
     }
+
     @GetMapping("/rate_level")
     public ResponseEntity<List<ViewLevelAnswersResponse>> rateLevel(
             @RequestParam UUID technologyId,

@@ -200,6 +200,7 @@ public class TechnologiesService {
                 .checked(answer.isChecked())
                 .level(answer.getLevel())
                 .type(answer.getType())
+                .reason(answer.getReason())
                 .build();
     }
 

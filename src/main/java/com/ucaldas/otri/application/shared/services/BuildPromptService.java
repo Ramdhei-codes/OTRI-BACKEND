@@ -7,6 +7,7 @@ import com.ucaldas.otri.domain.technologies.enums.InventiveLevel;
 import com.ucaldas.otri.domain.technologies.enums.PreliminaryInterest;
 import com.ucaldas.otri.domain.technologies.enums.ReadinessType;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class BuildPromptService {
@@ -162,7 +163,9 @@ public class BuildPromptService {
     }
 
     public static String[] splitAnswersResponse(String content){
-        return content.split("\n");
+        return Arrays.stream(content.split("\n"))
+                .filter(line -> !line.trim().isEmpty())
+                .toArray(String[]::new);
     }
 
     private static String MapBoolean(boolean value){

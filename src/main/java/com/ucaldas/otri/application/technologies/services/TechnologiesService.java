@@ -100,6 +100,8 @@ public class TechnologiesService {
                         .responsibleGroup(tech.getResponsibleGroup())
                         .lastUpdatedDate(tech.getLastUpdatedDate())
                         .status(tech.getStatus())
+                        .trlLevel(tech.getTechnicalDescription() != null ? tech.getTechnicalDescription().getTrlLevel() : 0)
+                        .crlLevel(tech.getPatentabilityAnalysis() != null ? tech.getPatentabilityAnalysis().getCrlLevel() : 0)
                         .build())
                 .collect(Collectors.toList()
                 );

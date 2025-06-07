@@ -19,4 +19,6 @@ public class TechnologySummaryResponse {
     private String responsibleGroup;
     private Date lastUpdatedDate;
     private TechnologyStatus status;
+    private int trlLevel;
+    private int crlLevel;
 }
